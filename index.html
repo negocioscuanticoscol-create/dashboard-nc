@@ -1547,12 +1547,8 @@ function exportConversation(conv) {
    POLLING (placeholder, refresca cada N seg)
    ========================================================= */
 function startPolling() {
-  setInterval(() => {
-    if (!state.authenticated) return;
-    if (CONFIG.APPS_SCRIPT_URL) {
-      loadConversations();
-    }
-  }, CONFIG.POLL_INTERVAL);
+  // Polling deshabilitado en v0.1 - causaba race condition con selectConv.
+  // En v0.2 implementaremos polling incremental que no rompa el estado.
 }
 
 /* =========================================================
