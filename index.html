@@ -1319,12 +1319,42 @@ function renderChat() {
   Object.entries(byDay).forEach(([day, msgs]) => {
     messagesHtml += `<div class="msg-day">${day}</div>`;
     msgs.forEach(m => {
-      if (m.dir === 'in') {
-        messagesHtml += `
-          <div class="msg in">${escapeHtml(m.text)}</div>
-          <div class="msg-meta"><span>${formatHourMin(m.time)}</span></div>
-        `;
-      } else {
+      iif (m.dir === 'in') {
+  let contentHtml;
+  if (m.media_type && m.media_url) {
+    if (m.media_type === 'image') {
+      contentHtml = `
+        <a href="${escapeHtml(m.media_url)}" target="_blank" rel="noopener">
+          <img src="${escapeHtml(m.media_url)}" alt="${escapeHtml(m.media_filename || 'imagen')}"
+            style="max-width:280px; max-height:320px; border-radius:8px; display:block;" />
+        </a>
+        ${m.text ? `<div style="margin-top:6px;">${escapeHtml(m.text)}</div>` : ''}
+      `;
+    } else if (m.media_type === 'document') {
+      contentHtml = `
+        <a href="${escapeHtml(m.media_url)}" target="_blank" rel="noopener"
+          style="display:inline-flex; align-items:center; gap:8px; padding:8px 10px;
+                 background:var(--bg-3); border-radius:8px; color:var(--text-1); text-decoration:none;">
+          <span style="font-size:18px;">📄</span>
+          <span>${escapeHtml(m.media_filename || 'Documento')}</span>
+        </a>
+        ${m.text ? `<div style="margin-top:6px;">${escapeHtml(m.text)}</div>` : ''}
+      `;
+    } else if (m.media_type === 'audio') {
+      contentHtml = `<audio controls src="${escapeHtml(m.media_url)}" style="max-width:280px;"></audio>`;
+    } else if (m.media_type === 'video') {
+      contentHtml = `<video controls src="${escapeHtml(m.media_url)}" style="max-width:280px; border-radius:8px;"></video>`;
+    } else {
+      contentHtml = escapeHtml(m.text);
+    }
+  } else {
+    contentHtml = escapeHtml(m.text);
+  }
+  messagesHtml += `
+    <div class="msg in">${contentHtml}</div>
+    <div class="msg-meta"><span>${formatHourMin(m.time)}</span></div>
+  `;
+} else {
         const fromBot = m.from === 'bot';
         messagesHtml += `
           <div class="msg out ${fromBot ? 'from-bot' : ''}">${escapeHtml(m.text)}</div>
