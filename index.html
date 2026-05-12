@@ -1319,7 +1319,7 @@ function renderChat() {
   Object.entries(byDay).forEach(([day, msgs]) => {
     messagesHtml += `<div class="msg-day">${day}</div>`;
     msgs.forEach(m => {
-      iif (m.dir === 'in') {
+      if (m.dir === 'in') {
   let contentHtml;
   if (m.media_type && m.media_url) {
     if (m.media_type === 'image') {
