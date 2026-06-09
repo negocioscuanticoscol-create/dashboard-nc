@@ -1182,6 +1182,24 @@ async function loadConversations() {
   renderChat();
 }
 
+/* === AUTO-REFRESH: lista de leads cada 15s, sin tocar el chat abierto === */
+async function autoRefreshList() {
+  if (!CONFIG.APPS_SCRIPT_URL || !state.currentClient) return;
+  try {
+    const url = `${CONFIG.APPS_SCRIPT_URL}?action=list&client=${encodeURIComponent(state.currentClient.id)}&token=${encodeURIComponent(CONFIG.ACCESS_TOKEN)}`;
+    const res = await fetch(url);
+    const data = await res.json();
+    if (!data.error && data.conversations) {
+      const oldByPhone = {};
+      state.conversations.forEach(c => { if (c.messages) oldByPhone[c.id] = c.messages; });
+      data.conversations.forEach(c => { if (oldByPhone[c.id]) c.messages = oldByPhone[c.id]; });
+      state.conversations = data.conversations;
+      renderConvList();
+    }
+  } catch (e) { /* silencioso: no molestar si falla un ciclo */ }
+}
+setInterval(autoRefreshList, 15000);
+
 /* =========================================================
    RENDER LISTA DE CONVERSACIONES
    ========================================================= */
