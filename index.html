@@ -1434,11 +1434,9 @@ function renderChat() {
     </div>
 
     <div class="rp-section">
-      <div class="rp-label">Acciones rápidas</div>
-      <div class="action-list">
-        <button class="action-item" data-action="open-wa"><span class="icon">📱</span>Abrir en WhatsApp Web</button>
-        <button class="action-item" data-action="export"><span class="icon">⬇</span>Exportar conversación</button>
-      </div>
+      <div class="rp-label">Estado del lead</div>
+      <div class="info-row"><span class="label">Etiqueta</span><span class="value">${escapeHtml(info.etiqueta || conv.etiqueta || '—')}</span></div>
+      <div class="info-row"><span class="label">🌡️ Calor</span><span class="value" style="color:${calorColor(info.etiqueta || conv.etiqueta)};font-weight:700">${calorTexto(info.etiqueta || conv.etiqueta)}</span></div>
     </div>
   `;
 
@@ -1483,6 +1481,24 @@ function renderChat() {
     const m = document.getElementById('messagesArea');
     if (m) m.scrollTop = m.scrollHeight;
   }, 30);
+}
+
+function calorTexto(et){
+  et=(et||'').toString().toLowerCase();
+  if(et.includes('mega')) return '🔥 MEGA — prioridad máxima';
+  if(et.includes('cliente')) return '✅ Cliente';
+  if(et.includes('calific')) return '🔥 Caliente — listo p/ cerrar';
+  if(et.includes('interes')) return '🌤️ Tibio';
+  if(et.includes('frio')||et.includes('frío')||et.includes('descart')) return '❄️ Frío';
+  if(et.includes('prospecto')) return '❄️ Frío (nuevo)';
+  return '—';
+}
+function calorColor(et){
+  et=(et||'').toString().toLowerCase();
+  if(et.includes('mega')) return '#ff4d4d';
+  if(et.includes('cliente')||et.includes('calific')) return '#19d68f';
+  if(et.includes('interes')) return '#ffb547';
+  return '#5b9bff';
 }
 
 function escapeHtml(s) {
