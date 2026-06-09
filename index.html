@@ -1375,7 +1375,7 @@ function renderChat() {
 } else {
         const fromBot = m.from === 'bot';
         messagesHtml += `
-          <div class="msg out ${fromBot ? 'from-bot' : ''}">${escapeHtml(m.text)}</div>
+          <div class="msg out ${fromBot ? 'from-bot' : ''}">${escapeHtml(m.text)}${mediaTag(m)}</div>
           <div class="msg-meta">
             <span class="badge ${fromBot ? 'bot' : 'human'}">${fromBot ? 'BOT' : 'HUMANO'}</span>
             <span>${formatHourMin(m.time)}</span>
@@ -1517,6 +1517,16 @@ function calorColor(et){
   if(et.includes('cliente')||et.includes('calific')) return '#19d68f';
   if(et.includes('interes')) return '#ffb547';
   return '#5b9bff';
+}
+
+function mediaTag(m){
+  const acc = m.acciones || m.acciones_disparadas || m.accion || '';
+  if (acc) return `<div style="margin-top:5px;font-size:11px;color:var(--accent);opacity:.9;">📎 enviado: ${escapeHtml(String(acc).replace(/ENVIAR_/g,'').replace(/_/g,' ').trim())}</div>`;
+  if (m.media_type) {
+    const ic = m.media_type==='video'?'🎥':(m.media_type==='image'?'🖼️':(m.media_type==='document'?'📄':'📎'));
+    return `<div style="margin-top:5px;font-size:11px;color:var(--accent);opacity:.9;">${ic} ${escapeHtml(m.media_type)} enviado</div>`;
+  }
+  return '';
 }
 
 function escapeHtml(s) {
